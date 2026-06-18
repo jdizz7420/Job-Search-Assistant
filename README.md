@@ -34,13 +34,29 @@ Checks Gmail for status updates on active applications and syncs them to the tra
 
 ---
 
+## 📄 tailor-resume
+
+Builds a tailored resume and cover letter for each Interested job that doesn't have one yet.
+
+**What it does:**
+- Reads `new-role-postings.md` for all jobs marked Interested without an existing resume
+- Fetches the full job description from LinkedIn via Chrome
+- Tailors the resume: rewrites the summary, reorders bullets to mirror JD keywords, adjusts skills section
+- Generates both a resume and cover letter as `.docx` files in the Resume Builder folder
+- Updates `application-tracker.md` to 🟡 Resume Ready
+
+**Invoke:** `/tailor-resume`
+
+---
+
 ## 🗂 Dependencies
 
 Both skills read and write files in the Application Tracker project:
 
 | File | Used by |
 |---|---|
-| `application-tracker.md` | `application-status-check` (r/w), `linkedin-job-alert-digest` (write on interest) |
-| `new-role-postings.md` | `linkedin-job-alert-digest` (r/w) |
+| `application-tracker.md` | `application-status-check` (r/w), `linkedin-job-alert-digest` (write on interest), `tailor-resume` (write) |
+| `new-role-postings.md` | `linkedin-job-alert-digest` (r/w), `tailor-resume` (read) |
+| `Resume Builder/*.docx` | `tailor-resume` (write) |
 
 Gmail access is provided via the Claude.ai Gmail MCP connector.
