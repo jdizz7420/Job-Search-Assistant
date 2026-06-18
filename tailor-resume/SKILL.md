@@ -1,6 +1,6 @@
 ---
 name: tailor-resume
-description: For each Interested job in new-role-postings.md without an existing resume, fetches the full JD via Chrome, identifies any experience gaps, asks before adding anything new, then generates a tailored resume and cover letter as .docx files and updates the tracker to 🟡 Resume Ready
+description: For each Interested job without an existing resume, fetches the JD via Chrome, asks about gaps, and    builds a tailored resume and cover letter
 ---
 
 Read "/Users/jdlawson/Documents/Claude/Projects/Application Tracker/new-role-postings.md" and collect every row where Status = "Interested". These are the candidate jobs.
