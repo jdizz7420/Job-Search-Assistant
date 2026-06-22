@@ -3,7 +3,7 @@ name: application-status-check
 description: Daily check of Gmail for status updates from companies in the application tracker, auto-updates the    Status column
 ---
 
-Read "/Users/jdlawson/Documents/Claude/Projects/Application Tracker/application-tracker.md" (use Read). It has an "Active Pipeline" markdown table with columns # | Company | Role | Status | Fit | Files, followed by a "Status Key" legend and a "Company Notes" section with per-company detail.
+Read "~/Documents/Claude/Projects/Application Tracker/application-tracker.md" (use Read). It has an "Active Pipeline" markdown table with columns # | Company | Role | Status | Fit | Files, followed by a "Status Key" legend and a "Company Notes" section with per-company detail.
 
 Build a list of company names from the Active Pipeline table, excluding any row whose Status is "❌ Closed" (no need to keep checking dead leads) and excluding generic/ambiguous names that would produce false-positive search results (use judgment — e.g. very short or common words).
 
