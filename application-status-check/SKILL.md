@@ -1,6 +1,6 @@
 ---
 name: application-status-check
-description: Daily check of Gmail for status updates from companies in the application tracker, auto-updates the Status column
+description: Daily check of Gmail for status updates from companies in the application tracker, auto-updates the    Status column
 ---
 
 Read "/Users/jdlawson/Documents/Claude/Projects/Application Tracker/application-tracker.md" (use Read). It has an "Active Pipeline" markdown table with columns # | Company | Role | Status | Fit | Files, followed by a "Status Key" legend and a "Company Notes" section with per-company detail.
