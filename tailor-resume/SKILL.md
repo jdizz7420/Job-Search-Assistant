@@ -16,15 +16,20 @@ Read the following files as context before building anything:
 
 Process one job at a time. For each new job:
 
-## Step 1 — Fetch the full job description via Chrome
+## Step 1 — Get the full job description
 
-Use the same Chrome enrichment approach as the linkedin-job-alert-digest skill:
+First check if the JD was already saved by the linkedin-job-alert-digest skill:
+- Read `~/Documents/Claude/Projects/Application Tracker/job-descriptions/<JOBID>.txt`
+- If the file exists and has content, use it as the full JD — skip Chrome entirely for this job.
+
+If the file does not exist, fall back to fetching via Chrome:
 1. Navigate to `https://www.linkedin.com/jobs/view/<JOBID>/`
 2. Wait ~2-3 seconds, then scroll down to trigger lazy-loading
 3. Read the page with mcp__Claude_in_Chrome__get_page_text
 4. If "About the job" is truncated behind a "…more" link, click it and re-read the full page
 5. Do a second scroll/wait/read pass if the description hasn't fully loaded on the first attempt
 6. If Chrome is unavailable or the page won't load after two passes, ask the user to paste the JD manually before continuing — do not proceed without it
+7. Once fetched, save the full page text to `~/Documents/Claude/Projects/Application Tracker/job-descriptions/<JOBID>.txt` for future use.
 
 ## Step 2 — Identify gaps and ask before building
 
