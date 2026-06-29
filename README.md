@@ -1,62 +1,54 @@
-# claude-skills
+# Job Search Assistant
 
-Personal Claude Code skills for job search automation.
+A production Claude Code system that automates my job search — built to run daily, not as a demo.
 
----
-
-## 📬 linkedin-job-alert-digest
-
-Processes LinkedIn job alert emails from the last 24 hours into a structured digest.
-
-**What it does:**
-- Searches Gmail for LinkedIn job alert emails
-- Parses job listings (title, company, location, salary) and deduplicates by Job ID
-- Enriches new listings via Chrome to extract salary ranges and job descriptions
-- Cross-references against the job tracker to skip already-seen postings
-- Appends new jobs to `new-role-postings.md` and outputs a digest grouped by alert
-
-**Invoke:** `/linkedin-job-alert-digest`
+Three skills, one shared state file, real MCP integrations. Every job in my tracker went through this pipeline.
 
 ---
 
-## 📋 application-status-check
+## What it does
 
-Checks Gmail for status updates on active applications and syncs them to the tracker.
+### `/linkedin-job-alert-digest`
+Runs each morning against my Gmail inbox. Pulls LinkedIn job alert emails from the last 24 hours, parses each listing, deduplicates by Job ID against a running log, applies a fit-scoring rubric (title match, seniority, salary, company recognition), and auto-declines roles that fail hard filters (salary below floor, engineering titles, non-remote outside Phoenix). Outputs a ranked digest and appends new jobs to the tracker.
 
-**What it does:**
-- Reads the active pipeline from `application-tracker.md`
-- Searches Gmail for emails from each tracked company in the last 24 hours
-- Detects rejections, interview invites, recruiter screens, offers, and assessments
-- Updates the `Status` column and appends a dated note under Company Notes
-- Flags ambiguous emails for manual review rather than guessing
+### `/tailor-resume`
+For each job marked Interested without an existing resume: fetches the full JD from LinkedIn (saved to disk so it's never fetched twice), analyzes it against a base resume to categorize every requirement as covered, partially covered, or missing, surfaces gaps as questions before building anything, then writes a tailored `.docx` resume and cover letter. The gap-check step is load-bearing — it exists specifically to prevent the model from inventing experience that isn't there.
 
-**Invoke:** `/application-status-check`
+### `/application-status-check`
+Reads the active pipeline, searches Gmail for emails from each company in the last 24 hours, classifies them (rejection, interview invite, recruiter screen, offer, assessment), and updates the tracker. Flags ambiguous emails for manual review rather than guessing.
 
 ---
 
-## 📄 tailor-resume
+## Architecture
 
-Builds a tailored resume and cover letter for each Interested job that doesn't have one yet.
+```
+Gmail MCP ──────────────────────────────────────────────┐
+Chrome MCP (LinkedIn scraping) ──────────────────────── Claude Code
+Google Drive MCP ───────────────────────────────────────┘
+                                        │
+                              ┌─────────▼──────────┐
+                              │  new-role-postings  │  ← dedup log + interest tracker
+                              │  application-tracker│  ← pipeline state
+                              │  job-descriptions/  │  ← cached JDs
+                              │  Resume Builder/    │  ← .docx outputs
+                              └────────────────────┘
+```
 
-**What it does:**
-- Reads `new-role-postings.md` for all jobs marked Interested without an existing resume
-- Fetches the full job description from LinkedIn via Chrome
-- Tailors the resume: rewrites the summary, reorders bullets to mirror JD keywords, adjusts skills section
-- Generates both a resume and cover letter as `.docx` files in the Resume Builder folder
-- Updates `application-tracker.md` to 🟡 Resume Ready
-
-**Invoke:** `/tailor-resume`
+The tracker file is the shared state machine. Each skill reads from it, writes to it, and leaves a dated audit trail. Skills are designed to be re-runnable without creating duplicates.
 
 ---
 
-## 🗂 Dependencies
+## Built with
 
-Both skills read and write files in the Application Tracker project:
+- [Claude Code](https://claude.ai/code) — skill authoring and execution
+- Claude.ai MCP connectors — Gmail, Chrome, Google Drive
+- `docx` (npm) — programmatic resume generation
+- Node.js — resume build scripts
 
-| File | Used by |
-|---|---|
-| `application-tracker.md` | `application-status-check` (r/w), `linkedin-job-alert-digest` (write on interest), `tailor-resume` (write) |
-| `new-role-postings.md` | `linkedin-job-alert-digest` (r/w), `tailor-resume` (read) |
-| `Resume Builder/*.docx` | `tailor-resume` (write) |
+---
 
-Gmail access is provided via the Claude.ai Gmail MCP connector.
+## Why I built it
+
+I was laid off in June 2026 as part of a Robinhood restructuring. This is the first thing I built after — partly to run the search efficiently, partly because building real systems is how I stay sharp.
+
+The resume tailor alone has processed 15+ applications. The digest runs every morning. The status checker caught two rejections and one interview invite before I checked my email.
